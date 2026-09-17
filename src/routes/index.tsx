@@ -1,24 +1,26 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight, Headphones, RefreshCcw, ShieldCheck, Truck } from "lucide-react";
+import campaign from "@/assets/largo-campaign.jpg";
+import women from "@/assets/largo-women.jpg";
+import men from "@/assets/largo-men.jpg";
+import casual from "@/assets/largo-casual.jpg";
+import elegant from "@/assets/largo-elegant.jpg";
+import sneaker from "@/assets/largo-sneaker.jpg";
+import { products } from "@/data/products";
+import { ProductCard } from "@/components/largo/ProductCard";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head:()=>({meta:[{title:"LARGO — Moda brasileira contemporânea"},{name:"description",content:"Conheça a coleção LARGO: roupas, tênis e acessórios com design brasileiro, elegância e conforto."},{property:"og:title",content:"LARGO — Moda brasileira contemporânea"},{property:"og:description",content:"Design brasileiro para vestir com intenção."},{property:"og:type",content:"website"},{name:"twitter:card",content:"summary_large_image"}]}), component: Home,
 });
-
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
+const categories=[{name:"Feminino",image:women,filter:"Feminino"},{name:"Masculino",image:men,filter:"Masculino"},{name:"Casual",image:casual,filter:"Casual"},{name:"Elegante",image:elegant,filter:"Elegante"},{name:"Tênis",image:sneaker,filter:"Tênis"}];
+function Home(){return <>
+  <section className="relative min-h-[78svh] overflow-hidden bg-foreground"><img src={campaign} width={1536} height={1152} alt="Modelos vestindo alfaiataria descontraída LARGO" className="absolute inset-0 h-full w-full object-cover"/><div className="absolute inset-0 bg-hero-shade"/><div className="relative mx-auto flex min-h-[78svh] max-w-[1440px] items-end px-5 pb-14 sm:px-8 md:pb-20 lg:px-12"><div className="max-w-2xl text-primary-foreground"><p className="mb-4 text-xs uppercase tracking-widest">Coleção 02 — Entre espaços</p><h1 className="font-display text-5xl leading-[.95] sm:text-7xl md:text-8xl">Vista o seu ritmo.</h1><p className="mt-5 max-w-md text-sm leading-6 opacity-90 sm:text-base">Alfaiataria leve, essenciais precisos e conforto sem excesso.</p><Button asChild variant="light" size="lg" className="mt-7"><Link to="/catalogo">Comprar agora <ArrowRight/></Link></Button></div></div></section>
+  <section className="page-wrap py-20"><div className="mb-9 flex items-end justify-between"><div><p className="eyebrow">Seleção LARGO</p><h2 className="section-title">Compre por intenção</h2></div><Link to="/catalogo" className="hidden text-sm underline underline-offset-4 sm:block">Ver tudo</Link></div><div className="grid grid-cols-2 gap-x-3 gap-y-8 md:grid-cols-5">{categories.map((c,i)=><Link key={c.name} to="/catalogo" search={{categoria:c.filter}} className={i===0?"col-span-2 md:col-span-1":""}><div className="group aspect-[4/5] overflow-hidden bg-muted"><img src={c.image} alt={`Moda ${c.name} LARGO`} width={1024} height={1280} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.025]"/></div><div className="mt-3 flex items-center justify-between"><span className="font-medium">{c.name}</span><ArrowRight size={16}/></div></Link>)}</div></section>
+  <section className="page-wrap py-12"><div className="mb-9"><p className="eyebrow">Escolhas da semana</p><h2 className="section-title">Em destaque</h2></div><div className="product-grid">{products.filter(p=>p.featured).map(p=><ProductCard key={p.id} product={p}/>)}</div></section>
+  <section className="mt-20 grid min-h-[65svh] md:grid-cols-2"><div className="order-2 flex items-center bg-accent px-7 py-16 text-accent-foreground md:order-1 md:px-16"><div><p className="eyebrow text-accent-foreground/70">Novidades</p><h2 className="font-display text-5xl leading-none md:text-7xl">Estrutura leve,<br/>vida real.</h2><p className="mt-6 max-w-md leading-7">Peças novas que atravessam trabalho, cidade e descanso sem pedir troca de personagem.</p><Button asChild variant="light" size="lg" className="mt-8"><Link to="/catalogo" search={{novidades:"sim"}}>Ver novidades</Link></Button></div></div><img src={elegant} alt="Nova alfaiataria feminina LARGO" width={1024} height={1280} loading="lazy" className="order-1 h-[60svh] w-full object-cover md:order-2 md:h-full"/></section>
+  <section className="page-wrap py-24"><div className="mb-9 flex items-end justify-between"><div><p className="eyebrow">Preços especiais</p><h2 className="section-title">Ofertas, sem ruído.</h2></div><Link to="/catalogo" search={{promocao:"sim"}} className="text-sm underline underline-offset-4">Ver ofertas</Link></div><div className="product-grid">{products.filter(p=>p.oldPrice).slice(0,4).map(p=><ProductCard key={p.id} product={p}/>)}</div></section>
+  <section className="border-y border-border bg-secondary"><div className="page-wrap grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-4">{[[Truck,"Frete para todo Brasil","Grátis acima de R$ 699"],[ShieldCheck,"Compra segura","Dados sempre protegidos"],[RefreshCcw,"Troca fácil","Primeira troca gratuita"],[Headphones,"Atendimento humano","Segunda a sexta, 9h–18h"]].map(([Icon,title,text])=><div key={String(title)} className="flex gap-4"><Icon size={21}/><div><h3 className="text-sm font-semibold">{String(title)}</h3><p className="mt-1 text-xs text-muted-foreground">{String(text)}</p></div></div>)}</div></section>
+  <section className="page-wrap py-24 text-center"><p className="eyebrow">Carta LARGO</p><h2 className="section-title">Novidades com medida.</h2><p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground">Lançamentos, editoriais e condições especiais. Sem excesso de e-mails.</p><form className="mx-auto mt-7 flex max-w-lg" onSubmit={e=>e.preventDefault()}><Input type="email" required placeholder="Seu melhor e-mail" aria-label="E-mail" className="h-12 rounded-none border-r-0"/><Button variant="editorial" size="lg">Assinar</Button></form></section>
+</>}
